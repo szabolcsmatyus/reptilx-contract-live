@@ -10,6 +10,9 @@ skip-lint = false
 [programs.mainnet]
 reptilx_contract_live = "PbQHuZDEW5EUHo3tbRAcRSqsHqKCxBhQMBV197ZsTiz"
 
+[verifiable-build]
+security_txt = "https://reptilxtoken.com/.well-known/security.txt"
+
 [registry]
 url = "https://api.apr.dev"
 
