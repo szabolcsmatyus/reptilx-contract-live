@@ -20,20 +20,7 @@ pub mod reptilx_contract {
         config.price_per_token = new_price;
         Ok(())
     }
-    pub fn pause(ctx: Context<UpdatePrice>) -> Result<()> {
-        let config = &mut ctx.accounts.config;
-        require_keys_eq!(ctx.accounts.seller.key(), config.seller, CustomError::Unauthorized);
-        config.paused = true;
-        Ok(())
-    }
-    pub fn unpause(ctx: Context<UpdatePrice>) -> Result<()> {
-        let config = &mut ctx.accounts.config;
-        require_keys_eq!(ctx.accounts.seller.key(), config.seller, CustomError::Unauthorized);
-        config.paused = false;
-        Ok(())
-    }
     pub fn buy(ctx: Context<Buy>, amount_of_spl: u64) -> Result<()> {
-        require!(!ctx.accounts.config.paused, CustomError::SalePaused);
         require_keys_eq!(
             ctx.accounts.seller_spl_account.mint,
             ctx.accounts.mint.key(),
@@ -157,7 +144,6 @@ pub struct Config {
     pub price_per_token: u64,
     pub seller: Pubkey,
     pub sol_recipient: Pubkey,
-    pub paused: bool,
 }
 #[error_code]
 pub enum CustomError {
@@ -175,6 +161,4 @@ pub enum CustomError {
     InvalidAmount,
     #[msg("SOL recipient does not match configuration.")]
     InvalidSolRecipient,
-    #[msg("Token sale is currently paused.")]
-    SalePaused,
 }
