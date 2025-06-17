@@ -14,6 +14,14 @@ pub mod reptilx_contract {
         config.sol_recipient = sol_recipient;
         Ok(())
     }
+    pub fn reset_config(ctx: Context<ResetConfig>, new_price: u64, new_recipient: Pubkey) -> Result<()> {
+        let config = &mut ctx.accounts.config;
+        require_keys_eq!(ctx.accounts.seller.key(), config.seller, CustomError::Unauthorized);
+        config.price_per_token = new_price;
+        config.sol_recipient = new_recipient;
+        config.paused = false;
+        Ok(())
+    }
     pub fn update_price(ctx: Context<UpdatePrice>, new_price: u64) -> Result<()> {
         let config = &mut ctx.accounts.config;
         require_keys_eq!(ctx.accounts.seller.key(), config.seller, CustomError::Unauthorized);
@@ -123,6 +131,12 @@ pub struct InitializeConfig<'info> {
     #[account(mut)]
     pub seller: Signer<'info>,
     pub system_program: Program<'info, System>,
+}
+#[derive(Accounts)]
+pub struct ResetConfig<'info> {
+    #[account(mut, seeds = [b"config"], bump)]
+    pub config: Account<'info, Config>,
+    pub seller: Signer<'info>,
 }
 #[derive(Accounts)]
 pub struct UpdatePrice<'info> {
